@@ -135,7 +135,7 @@ const getBooks = async function (req, res) {
 //******************************* get book by bookId in params ************************************ */
 
 const getBookByPathParam = async function (req, res) {
-
+try{
   let bookId = req.params.bookId;
   if (!bookId)return res.status(400).send({ status: false, message: "Please, enter Book id" });
 
@@ -157,8 +157,11 @@ const getBookByPathParam = async function (req, res) {
   return res
     .status(200)
     .send({ status: true, message: "Books list", data: getBook });
-};
 
+}catch(error){
+    res.status(500).send({status:false,msg:error.message})
+}
+}
 //*********************************** update book by bookId ******************************** */
 
 const updateBooks = async function (req, res) {
