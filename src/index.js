@@ -17,6 +17,8 @@ mongoose.connect("mongodb+srv://rahul:rahul123@cluster0.ghayzlv.mongodb.net/grou
 
 app.use('/', route)
 
+
+
 app.use(function(req,res){
     var err = new Error('Not Found.') 
     err.status = 400

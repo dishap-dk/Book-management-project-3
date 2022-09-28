@@ -16,8 +16,12 @@ const isDateValid = function (dateStr) {
     return false;
   }
 
+  
   return date.toISOString().startsWith(dateStr);
 };
+
+
+
 
 const isValid = function (value) {
   if (typeof value === 'undefined' || typeof value === null) return false
@@ -94,6 +98,7 @@ const getBooks = async function (req, res) {
   try {
     let query = req.query;
     let user_Id = query.userId;
+    if(query.userId || query.category || query.subcategory){
 
 
     if (user_Id) {
@@ -101,7 +106,7 @@ const getBooks = async function (req, res) {
         return res.status(400).send({ status: false, message: "not valid id" });
     }
 
-    let finalData = { userId: req.token.userId, isDeleted: false, ...query };
+    let finalData = { userId: req.token.userId, isDeleted: false,query };
     let filteredData = await bookModel
       .find(finalData)
       .sort({ title: 1 })
@@ -118,6 +123,10 @@ const getBooks = async function (req, res) {
     return res
       .status(200)
       .send({ status: true, message: "Books list", data: filteredData });
+    }else{
+      return res.status(400).send({ status: false, message: "filter should contain only userId,category & subcategory" })
+      
+    }
   } catch (error) {
     res.status(500).send({ status: false, msg: error.message });
   }
@@ -126,26 +135,16 @@ const getBooks = async function (req, res) {
 //******************************* get book by bookId in params ************************************ */
 
 const getBookByPathParam = async function (req, res) {
+
   let bookId = req.params.bookId;
-  if (!bookId)
-    return res
-      .status(400)
-      .send({ status: false, message: "Please, enter Book id" });
+  if (!bookId)return res.status(400).send({ status: false, message: "Please, enter Book id" });
 
   // if(!isValid.isValid(book)) return res.status(400).send({status: false, message: "Invalid Book id"});
   if (!ObjectId.isValid(bookId))
     return res.status(400).send({ status: false, message: "Invalid Book id" });
 
-  let getBook = await bookModel
-    .findById(bookId)
-    .select({ ISBN: 0, __v: 0 })
-    .lean();
-  if (!getBook)
-    return res
-      .status(404)
-      .send({
-        status: false,
-        message: `No such book exists with this id ${bookId}`,
+  let getBook = await bookModel.findById(bookId).select({ ISBN: 0, __v: 0 }).lean();
+  if (!getBook) return res.status(404).send({status: false,message: `No such book exists with this id ${bookId}`,
       });
 
   let getReview = await reviewModel.find({ bookId: bookId, isDeleted: false });

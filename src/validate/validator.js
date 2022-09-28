@@ -26,7 +26,7 @@ const isValidTitle = function(title) {
 
 const isValidName = function (name) {
   
-  if (!/^[A-Z][a-z]{1,}(?: [A-Z][a-z]+){1,}$/i.test(name)) return `${name} is not a valid name`    
+  if (!/^[A-Z][a-z ]{1,}(?:[A-Z][a-z]+){1,}$/i.test(name)) return `${name} is not a valid name`    
 }
 
 const isValidPhone = function(phone) {
